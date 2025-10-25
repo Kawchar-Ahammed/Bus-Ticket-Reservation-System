@@ -1,0 +1,267 @@
+<div class="booking-history-container">
+  <!-- Header -->
+  <div class="header">
+    <button mat-icon-button (click)="goBack()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>My Bookings</h1>
+  </div>
+
+  <!-- Search Section -->
+  <mat-card class="search-card">
+    <mat-card-content>
+      <div class="search-type-tabs">
+        <button 
+          mat-raised-button 
+          [color]="searchType === 'phone' ? 'primary' : ''" 
+          (click)="setSearchType('phone')">
+          Search by Phone
+        </button>
+        <button 
+          mat-raised-button 
+          [color]="searchType === 'ticket' ? 'primary' : ''" 
+          (click)="setSearchType('ticket')">
+          Search by Ticket Number
+        </button>
+      </div>
+
+      <form [formGroup]="searchForm" (ngSubmit)="searchBookings()" class="search-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>
+            {{ searchType === 'phone' ? 'Phone Number' : 'Ticket Number' }}
+          </mat-label>
+          <input 
+            matInput 
+            formControlName="searchValue"
+            [placeholder]="searchType === 'phone' ? 'Enter your phone number' : 'Enter ticket number'"
+            type="text">
+          <mat-icon matPrefix>{{ searchType === 'phone' ? 'phone' : 'confirmation_number' }}</mat-icon>
+        </mat-form-field>
+
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="searchForm.invalid || loading"
+          class="search-button">
+          <mat-icon>search</mat-icon>
+          Search Bookings
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Searching bookings...</p>
+  </div>
+
+  <!-- Bookings Table -->
+  <mat-card *ngIf="!loading && bookings.length > 0" class="bookings-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>receipt_long</mat-icon>
+        Found {{ bookings.length }} booking(s)
+      </mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <table mat-table [dataSource]="bookings" class="bookings-table">
+        
+        <!-- Ticket Number Column -->
+        <ng-container matColumnDef="ticketNumber">
+          <th mat-header-cell *matHeaderCellDef>Ticket Number</th>
+          <td mat-cell *matCellDef="let booking">{{ booking.ticketNumber }}</td>
+        </ng-container>
+
+        <!-- Passenger Name Column -->
+        <ng-container matColumnDef="passengerName">
+          <th mat-header-cell *matHeaderCellDef>Passenger</th>
+          <td mat-cell *matCellDef="let booking">{{ booking.passengerName }}</td>
+        </ng-container>
+
+        <!-- Route Column -->
+        <ng-container matColumnDef="route">
+          <th mat-header-cell *matHeaderCellDef>Route</th>
+          <td mat-cell *matCellDef="let booking">
+            {{ booking.fromCity }} → {{ booking.toCity }}
+          </td>
+        </ng-container>
+
+        <!-- Journey Date Column -->
+        <ng-container matColumnDef="journeyDate">
+          <th mat-header-cell *matHeaderCellDef>Journey Date</th>
+          <td mat-cell *matCellDef="let booking">
+            {{ booking.journeyDate | date:'mediumDate' }}
+          </td>
+        </ng-container>
+
+        <!-- Seat Number Column -->
+        <ng-container matColumnDef="seatNumber">
+          <th mat-header-cell *matHeaderCellDef>Seat</th>
+          <td mat-cell *matCellDef="let booking">{{ booking.seatNumber }}</td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let booking">
+            <mat-chip [color]="getStatusColor(booking.bookingStatus)">
+              {{ booking.bookingStatus }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let booking">
+            <button mat-icon-button (click)="viewBookingDetails(booking)" matTooltip="View Details">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button (click)="printTicket(booking)" matTooltip="Print Ticket">
+              <mat-icon>print</mat-icon>
+            </button>
+            <button 
+              mat-icon-button 
+              color="warn" 
+              (click)="cancelBooking(booking)" 
+              *ngIf="booking.bookingStatus !== 'Cancelled'"
+              matTooltip="Cancel Booking">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="booking-row"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Booking Details Modal -->
+  <div *ngIf="selectedBooking" class="booking-details-overlay" (click)="closeDetails()">
+    <mat-card class="booking-details-card" (click)="$event.stopPropagation()">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>confirmation_number</mat-icon>
+          Booking Details
+        </mat-card-title>
+        <button mat-icon-button (click)="closeDetails()" class="close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="details-grid">
+          <div class="detail-section">
+            <h3><mat-icon>receipt</mat-icon> Ticket Information</h3>
+            <div class="detail-row">
+              <span class="label">Ticket Number:</span>
+              <strong>{{ selectedBooking.ticketNumber }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Booking Date:</span>
+              <strong>{{ selectedBooking.bookingDate | date:'medium' }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <mat-chip [color]="getStatusColor(selectedBooking.bookingStatus)">
+                {{ selectedBooking.bookingStatus }}
+              </mat-chip>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3><mat-icon>person</mat-icon> Passenger Details</h3>
+            <div class="detail-row">
+              <span class="label">Name:</span>
+              <strong>{{ selectedBooking.passengerName }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Phone:</span>
+              <strong>{{ selectedBooking.phoneNumber }}</strong>
+            </div>
+            <div class="detail-row" *ngIf="selectedBooking.email">
+              <span class="label">Email:</span>
+              <strong>{{ selectedBooking.email }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3><mat-icon>directions_bus</mat-icon> Journey Details</h3>
+            <div class="detail-row">
+              <span class="label">Company:</span>
+              <strong>{{ selectedBooking.companyName }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Bus:</span>
+              <strong>{{ selectedBooking.busName || selectedBooking.busNumber }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Route:</span>
+              <strong>{{ selectedBooking.fromCity }} → {{ selectedBooking.toCity }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Journey Date:</span>
+              <strong>{{ selectedBooking.journeyDate | date:'fullDate' }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Departure Time:</span>
+              <strong>{{ selectedBooking.departureTime }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Seat Number:</span>
+              <strong>{{ selectedBooking.seatNumber }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3><mat-icon>location_on</mat-icon> Boarding & Dropping</h3>
+            <div class="detail-row">
+              <span class="label">Boarding Point:</span>
+              <strong>{{ selectedBooking.boardingPoint }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Dropping Point:</span>
+              <strong>{{ selectedBooking.droppingPoint }}</strong>
+            </div>
+          </div>
+
+          <div class="detail-section fare-section">
+            <h3><mat-icon>payments</mat-icon> Payment Details</h3>
+            <div class="detail-row">
+              <span class="label">Fare:</span>
+              <strong>{{ selectedBooking.currency }} {{ selectedBooking.fare }}</strong>
+            </div>
+            <div class="detail-row">
+              <span class="label">Payment Status:</span>
+              <mat-chip [color]="selectedBooking.paymentStatus === 'Paid' ? 'primary' : 'warn'">
+                {{ selectedBooking.paymentStatus }}
+              </mat-chip>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="printTicket(selectedBooking)">
+            <mat-icon>print</mat-icon>
+            Print Ticket
+          </button>
+          <button 
+            mat-raised-button 
+            color="warn" 
+            (click)="cancelBooking(selectedBooking)" 
+            *ngIf="selectedBooking.bookingStatus !== 'Cancelled'">
+            <mat-icon>cancel</mat-icon>
+            Cancel Booking
+          </button>
+          <button mat-stroked-button (click)="closeDetails()">
+            Close
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

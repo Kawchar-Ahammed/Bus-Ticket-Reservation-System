@@ -1,0 +1,120 @@
+.receipt-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.receipt-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.success-icon {
+  i {
+    font-size: 4rem;
+  }
+}
+
+.receipt-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.section-title {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #007bff;
+  display: inline-block;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detail-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #212529;
+  font-weight: 400;
+}
+
+.amount-details {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+.receipt-footer {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.table {
+  margin-bottom: 0;
+  
+  thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+  }
+}
+
+// Print styles
+.print-header {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-header {
+    display: block;
+    margin-bottom: 2rem;
+  }
+
+  .receipt-container {
+    padding: 0;
+  }
+
+  .receipt-card {
+    box-shadow: none;
+    border: 1px solid #dee2e6;
+  }
+
+  .card-header {
+    background-color: #198754 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  // Ensure badges print with colors
+  .badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  // Page break settings
+  .receipt-section {
+    page-break-inside: avoid;
+  }
+}

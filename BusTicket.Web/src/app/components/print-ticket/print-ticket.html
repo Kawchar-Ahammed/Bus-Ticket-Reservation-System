@@ -1,0 +1,162 @@
+<div class="print-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    <p>Loading ticket...</p>
+  </div>
+
+  <!-- Ticket Content -->
+  <div *ngIf="!loading && ticket" class="ticket">
+    <!-- No Print Buttons -->
+    <div class="no-print action-buttons">
+      <button mat-raised-button color="primary" (click)="print()">
+        <mat-icon>print</mat-icon>
+        Print Ticket
+      </button>
+    </div>
+
+    <!-- Ticket Header -->
+    <div class="ticket-header">
+      <div class="company-info">
+        <h1>{{ ticket.companyName }}</h1>
+        <p class="bus-info">{{ ticket.busName }} - {{ ticket.busNumber }}</p>
+      </div>
+      <div class="ticket-number">
+        <p class="label">Ticket Number</p>
+        <h2>{{ ticket.ticketNumber }}</h2>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Journey Information -->
+    <div class="journey-section">
+      <h3>Journey Details</h3>
+      <div class="journey-details">
+        <div class="route-info">
+          <div class="location">
+            <mat-icon>trip_origin</mat-icon>
+            <div>
+              <p class="city">{{ ticket.fromCity }}</p>
+              <p class="address">{{ ticket.boardingPoint }}</p>
+            </div>
+          </div>
+          <div class="arrow">
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+          <div class="location">
+            <mat-icon>place</mat-icon>
+            <div>
+              <p class="city">{{ ticket.toCity }}</p>
+              <p class="address">{{ ticket.droppingPoint }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="journey-info-grid">
+          <div class="info-item">
+            <mat-icon>event</mat-icon>
+            <div>
+              <p class="label">Journey Date</p>
+              <p class="value">{{ ticket.journeyDate | date:'fullDate' }}</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <p class="label">Departure Time</p>
+              <p class="value">{{ ticket.departureTime }}</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>event_seat</mat-icon>
+            <div>
+              <p class="label">Seat Number</p>
+              <p class="value">{{ ticket.seatNumber }}</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>payments</mat-icon>
+            <div>
+              <p class="label">Fare</p>
+              <p class="value">{{ ticket.currency }} {{ ticket.fare }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Passenger Information -->
+    <div class="passenger-section">
+      <h3>Passenger Information</h3>
+      <div class="passenger-grid">
+        <div class="info-item">
+          <p class="label">Name</p>
+          <p class="value">{{ ticket.passengerName }}</p>
+        </div>
+        <div class="info-item">
+          <p class="label">Phone</p>
+          <p class="value">{{ ticket.phoneNumber }}</p>
+        </div>
+        <div class="info-item">
+          <p class="label">Email</p>
+          <p class="value">{{ ticket.email || 'N/A' }}</p>
+        </div>
+        <div class="info-item">
+          <p class="label">Booking Date</p>
+          <p class="value">{{ ticket.bookingDate | date:'medium' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- QR Code and Status -->
+    <div class="footer-section">
+      <div class="qr-section">
+        <div class="qr-code-container">
+          <canvas #qrCanvas></canvas>
+          <p class="qr-label">Scan for Verification</p>
+        </div>
+      </div>
+      <div class="status-section">
+        <div class="status-item">
+          <p class="label">Booking Status</p>
+          <p class="value status">{{ ticket.bookingStatus }}</p>
+        </div>
+        <div class="status-item">
+          <p class="label">Payment Status</p>
+          <p class="value status">{{ ticket.paymentStatus }}</p>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- Terms and Conditions -->
+    <div class="terms-section">
+      <h4>Terms & Conditions</h4>
+      <ul>
+        <li>Please arrive at the boarding point at least 15 minutes before departure.</li>
+        <li>This ticket is non-transferable and must be presented at the time of boarding.</li>
+        <li>Cancellation policy: Full refund if cancelled 24+ hours before departure, 50% refund if cancelled 2-24 hours before.</li>
+        <li>No refund for cancellations less than 2 hours before departure or no-shows.</li>
+        <li>The company reserves the right to cancel or reschedule services due to unforeseen circumstances.</li>
+        <li>Please keep your valuables with you. The company is not responsible for lost items.</li>
+      </ul>
+    </div>
+
+    <!-- Print Footer -->
+    <div class="print-footer">
+      <p>Printed on: {{ getCurrentDate() | date:'medium' }}</p>
+      <p>Thank you for choosing {{ ticket.companyName }}. Have a safe journey!</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && !ticket" class="error">
+    <mat-icon>error_outline</mat-icon>
+    <p>Ticket not found</p>
+  </div>
+</div>

@@ -1,0 +1,272 @@
+.booking-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.booking-card {
+  .booking-summary {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+
+    h3 {
+      margin: 0 0 1rem 0;
+      color: #333;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .fare {
+        color: #1976d2;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      min-width: 150px;
+
+      mat-spinner {
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.success-container {
+  .success-card {
+    mat-card-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+      color: white;
+      margin: -16px -16px 16px -16px;
+
+      .success-icon {
+        mat-icon {
+          font-size: 4rem;
+          width: 4rem;
+          height: 4rem;
+          margin-bottom: 1rem;
+        }
+      }
+
+      mat-card-title {
+        color: white;
+        font-size: 1.8rem;
+        margin-bottom: 0.5rem;
+      }
+
+      mat-card-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+
+    .ticket-details {
+      margin-bottom: 1.5rem;
+
+      h3 {
+        margin: 0 0 1.5rem 0;
+        color: #333;
+        font-size: 1.3rem;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e0e0e0;
+
+        .label {
+          color: #666;
+        }
+
+        .value {
+          color: #333;
+          text-align: right;
+        }
+
+        &.total {
+          border-top: 2px solid #4caf50;
+          border-bottom: none;
+          margin-top: 1rem;
+          padding-top: 1rem;
+          font-size: 1.2rem;
+
+          .value {
+            color: #4caf50;
+          }
+        }
+      }
+    }
+
+    .important-note {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      border-radius: 4px;
+      margin-top: 1.5rem;
+
+      mat-icon {
+        color: #ffc107;
+      }
+
+      p {
+        margin: 0;
+        color: #856404;
+      }
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem;
+      margin: 0 -16px -16px -16px;
+      background-color: #fafafa;
+
+      button {
+        flex: 1;
+        margin: 0 0.5rem;
+      }
+    }
+  }
+}
+
+@media print {
+  .form-actions,
+  mat-card-actions,
+  .important-note {
+    display: none !important;
+  }
+
+  .success-card {
+    box-shadow: none !important;
+    border: 1px solid #000;
+  }
+}
+
+// Payment Modal Styles
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+
+  &.modal-large {
+    max-width: 800px;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .btn-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    padding: 0;
+
+    mat-icon {
+      color: white;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.modal-body {
+  padding: 24px;
+}

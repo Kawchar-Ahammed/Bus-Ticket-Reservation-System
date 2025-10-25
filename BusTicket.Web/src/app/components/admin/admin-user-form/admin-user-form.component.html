@@ -1,0 +1,98 @@
+<div class="form-container">
+  <div class="form-header">
+    <h2>{{ isEditMode ? 'Edit Admin User' : 'Create Admin User' }}</h2>
+  </div>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <!-- Email (Create mode only) -->
+    <div class="form-group" *ngIf="!isEditMode">
+      <label for="email">Email <span class="required">*</span></label>
+      <input 
+        type="email" 
+        id="email" 
+        formControlName="email"
+        class="form-control"
+        [class.is-invalid]="hasError('email', 'required') || hasError('email', 'email')"
+        placeholder="admin@example.com">
+      <div class="invalid-feedback" *ngIf="hasError('email', 'required')">
+        Email is required
+      </div>
+      <div class="invalid-feedback" *ngIf="hasError('email', 'email')">
+        Please enter a valid email address
+      </div>
+    </div>
+
+    <!-- Password (Create mode only) -->
+    <div class="form-group" *ngIf="!isEditMode">
+      <label for="password">Password <span class="required">*</span></label>
+      <input 
+        type="password" 
+        id="password" 
+        formControlName="password"
+        class="form-control"
+        [class.is-invalid]="hasError('password', 'required') || hasError('password', 'minlength')"
+        placeholder="Minimum 6 characters">
+      <div class="invalid-feedback" *ngIf="hasError('password', 'required')">
+        Password is required
+      </div>
+      <div class="invalid-feedback" *ngIf="hasError('password', 'minlength')">
+        Password must be at least 6 characters
+      </div>
+    </div>
+
+    <!-- Full Name -->
+    <div class="form-group">
+      <label for="fullName">Full Name <span class="required">*</span></label>
+      <input 
+        type="text" 
+        id="fullName" 
+        formControlName="fullName"
+        class="form-control"
+        [class.is-invalid]="hasError('fullName', 'required')"
+        placeholder="John Doe">
+      <div class="invalid-feedback" *ngIf="hasError('fullName', 'required')">
+        Full name is required
+      </div>
+    </div>
+
+    <!-- Role (Create mode only) -->
+    <div class="form-group" *ngIf="!isEditMode">
+      <label for="role">Role <span class="required">*</span></label>
+      <select 
+        id="role" 
+        formControlName="role"
+        class="form-control"
+        [class.is-invalid]="hasError('role', 'required')">
+        <option *ngFor="let option of roleOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      <div class="invalid-feedback" *ngIf="hasError('role', 'required')">
+        Role is required
+      </div>
+      <small class="form-text text-muted">
+        Note: Role can be changed later from the users list
+      </small>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="isSubmitting">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update' : 'Create' }} User</span>
+        <span *ngIf="isSubmitting">
+          <i class="fas fa-spinner fa-spin"></i> {{ isEditMode ? 'Updating...' : 'Creating...' }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

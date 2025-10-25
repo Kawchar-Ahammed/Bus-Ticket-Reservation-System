@@ -1,0 +1,144 @@
+<div class="form-container">
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h1>{{ isEditMode ? 'Edit Route' : 'Create New Route' }}</h1>
+        <p>{{ isEditMode ? 'Update route details' : 'Add a new travel route' }}</p>
+      </div>
+    </div>
+    <button class="btn-back" routerLink="/admin/routes">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to Routes
+    </button>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
+      <div class="alert alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-section">
+        <h3>Route Information</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fromCity">From City *</label>
+            <input
+              id="fromCity"
+              type="text"
+              formControlName="fromCity"
+              placeholder="e.g., New York"
+              [class.disabled]="isEditMode"
+            />
+            <small *ngIf="isEditMode" class="help-text">
+              Route cities cannot be changed
+            </small>
+            <span class="error-message" *ngIf="getFieldError('fromCity')">
+              {{ getFieldError('fromCity') }}
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="toCity">To City *</label>
+            <input
+              id="toCity"
+              type="text"
+              formControlName="toCity"
+              placeholder="e.g., Boston"
+              [class.disabled]="isEditMode"
+            />
+            <small *ngIf="isEditMode" class="help-text">
+              Route cities cannot be changed
+            </small>
+            <span class="error-message" *ngIf="getFieldError('toCity')">
+              {{ getFieldError('toCity') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="distanceInKm">Distance (km) *</label>
+          <input
+            id="distanceInKm"
+            type="number"
+            formControlName="distanceInKm"
+            placeholder="e.g., 350"
+            min="1"
+            step="0.1"
+          />
+          <span class="error-message" *ngIf="getFieldError('distanceInKm')">
+            {{ getFieldError('distanceInKm') }}
+          </span>
+        </div>
+
+        <div class="form-section">
+          <h4>Estimated Duration</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="durationHours">Hours *</label>
+              <input
+                id="durationHours"
+                type="number"
+                formControlName="durationHours"
+                placeholder="0"
+                min="0"
+                max="71"
+              />
+              <span class="error-message" *ngIf="getFieldError('durationHours')">
+                {{ getFieldError('durationHours') }}
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="durationMinutes">Minutes *</label>
+              <input
+                id="durationMinutes"
+                type="number"
+                formControlName="durationMinutes"
+                placeholder="0"
+                min="0"
+                max="59"
+              />
+              <span class="error-message" *ngIf="getFieldError('durationMinutes')">
+                {{ getFieldError('durationMinutes') }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" *ngIf="isEditMode">
+        <h3>Status</h3>
+        
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="isActive" />
+            <span>Active</span>
+          </label>
+          <small class="help-text">
+            Inactive routes won't be available for scheduling
+          </small>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" routerLink="/admin/routes">
+          Cancel
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          {{ isLoading ? 'Saving...' : (isEditMode ? 'Update Route' : 'Create Route') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

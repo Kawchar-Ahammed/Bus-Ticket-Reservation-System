@@ -1,0 +1,278 @@
+.booking-history-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 500;
+    color: #1976d2;
+  }
+
+  .back-button {
+    mat-icon {
+      font-size: 28px;
+    }
+  }
+}
+
+.search-card {
+  margin-bottom: 24px;
+
+  .search-type-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    justify-content: center;
+
+    button {
+      min-width: 200px;
+    }
+  }
+
+  .search-form {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    .full-width {
+      flex: 1;
+    }
+
+    .search-button {
+      margin-top: 8px;
+      padding: 0 32px;
+      height: 48px;
+
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 48px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.bookings-card {
+  margin-bottom: 24px;
+
+  mat-card-header {
+    margin-bottom: 16px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 20px;
+    }
+  }
+
+  .bookings-table {
+    width: 100%;
+
+    th {
+      font-weight: 600;
+      background-color: #f5f5f5;
+    }
+
+    .booking-row {
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f9f9f9;
+      }
+    }
+
+    mat-chip {
+      font-size: 12px;
+    }
+  }
+}
+
+.booking-details-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.booking-details-card {
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+
+  mat-card-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 16px;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-button {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+    }
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .detail-section {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px 0;
+      font-size: 18px;
+      color: #1976d2;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        color: #666;
+        font-size: 14px;
+      }
+
+      strong {
+        color: #333;
+        font-size: 14px;
+        text-align: right;
+      }
+
+      mat-chip {
+        font-size: 12px;
+      }
+    }
+
+    &.fare-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+
+      h3 {
+        color: white;
+      }
+
+      .detail-row {
+        border-bottom-color: rgba(255, 255, 255, 0.2);
+
+        .label {
+          color: rgba(255, 255, 255, 0.9);
+        }
+
+        strong {
+          color: white;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+
+    button {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .search-card {
+    .search-form {
+      flex-direction: column;
+
+      .search-button {
+        width: 100%;
+        margin-top: 0;
+      }
+    }
+
+    .search-type-tabs {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  .bookings-table {
+    font-size: 12px;
+
+    th, td {
+      padding: 8px 4px;
+    }
+  }
+
+  .booking-details-card {
+    .details-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}

@@ -1,0 +1,89 @@
+<div class="dashboard-home">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back! Here's what's happening with your bus ticket system today.</p>
+  </div>
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading dashboard...</p>
+  </div>
+  
+  <div *ngIf="!isLoading && statistics">
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card" *ngFor="let stat of stats">
+        <div class="stat-icon" [style.background]="stat.color">
+          <span class="icon-emoji">{{ stat.icon }}</span>
+        </div>
+        <div class="stat-content">
+          <div class="stat-title">{{ stat.title }}</div>
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-subtitle">{{ stat.subtitle }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+      <h2>Quick Actions</h2>
+      <div class="quick-actions-grid">
+        <div class="action-card" *ngFor="let action of quickActions" (click)="navigateTo(action.route)">
+          <div class="action-icon" [style.background]="action.color">
+            <span class="icon-emoji">{{ action.icon }}</span>
+          </div>
+          <div class="action-title">{{ action.title }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Recent Bookings Table -->
+    <div class="recent-bookings" *ngIf="statistics.recentBookings.length > 0">
+      <div class="section-header">
+        <h2>Recent Bookings</h2>
+        <button class="view-all-btn" (click)="navigateTo('/admin/bookings')">View All</button>
+      </div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket #</th>
+              <th>Passenger</th>
+              <th>Company</th>
+              <th>Route</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of statistics.recentBookings">
+              <td class="ticket-number">{{ booking.ticketNumber }}</td>
+              <td>{{ booking.passengerName }}</td>
+              <td>{{ booking.companyName }}</td>
+              <td>{{ booking.route }}</td>
+              <td>{{ booking.bookingDate | date: 'short' }}</td>
+              <td class="amount">${{ booking.fareAmount | number: '1.2-2' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(booking.status)">
+                  {{ booking.status }}
+                </span>
+              </td>
+              <td>
+                <button class="view-btn" (click)="viewBookingDetails(booking.id)">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- No Recent Bookings Message -->
+    <div class="no-data" *ngIf="statistics.recentBookings.length === 0">
+      <p>No recent bookings found</p>
+    </div>
+  </div>
+</div>

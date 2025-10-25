@@ -1,0 +1,121 @@
+<div class="routes-container">
+  <div class="header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h1>Routes Management</h1>
+        <p>Manage bus routes and travel paths</p>
+      </div>
+    </div>
+    <button class="btn-primary" routerLink="/admin/routes/new">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Add Route
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+      placeholder="Search by city..."
+    />
+  </div>
+
+  <div class="table-container">
+    <table *ngIf="filteredRoutes.length > 0">
+      <thead>
+        <tr>
+          <th>Route</th>
+          <th>Distance</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let route of filteredRoutes">
+          <td>
+            <div class="route-path">
+              <div class="route-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </div>
+              <div>
+                <div class="route-cities">{{ route.fromCity }} → {{ route.toCity }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="distance-badge">{{ route.distanceInKm }} km</span>
+          </td>
+          <td>
+            <span class="duration-badge">{{ formatDuration(route.estimatedDuration) }}</span>
+          </td>
+          <td>
+            <span [class]="getStatusClass(route.isActive)">
+              {{ getStatusText(route.isActive) }}
+            </span>
+          </td>
+          <td>{{ route.createdAt | date: 'MMM d, y' }}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon btn-edit" [routerLink]="['/admin/routes', route.id]" title="Edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+              <button class="btn-icon btn-delete" (click)="confirmDelete(route)" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredRoutes.length === 0" class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <h3>No routes found</h3>
+      <p>{{ searchTerm ? 'Try adjusting your search' : 'Get started by creating your first route' }}</p>
+      <button class="btn-primary" routerLink="/admin/routes/new" *ngIf="!searchTerm">
+        Add Your First Route
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="showDeleteModal = false">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Delete Route</h3>
+    <p *ngIf="selectedRoute">
+      Are you sure you want to delete the route from <strong>{{ selectedRoute.fromCity }}</strong> to <strong>{{ selectedRoute.toCity }}</strong>?
+    </p>
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="showDeleteModal = false">Cancel</button>
+      <button class="btn-danger" (click)="deleteRoute()">Delete</button>
+    </div>
+  </div>
+</div>

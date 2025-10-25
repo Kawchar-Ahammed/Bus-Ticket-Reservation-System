@@ -1,0 +1,145 @@
+<div class="schedules-container">
+  <div class="header">
+    <div class="header-content">
+      <div class="header-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      <div>
+        <h1>Bus Schedules</h1>
+        <p>Manage bus journey schedules</p>
+      </div>
+    </div>
+    <button class="btn-primary" routerLink="/admin/schedules/new">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Add Schedule
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="onSearch()"
+      placeholder="Search by bus, route, or city..."
+    />
+  </div>
+
+  <div class="table-container">
+    <table *ngIf="filteredSchedules.length > 0">
+      <thead>
+        <tr>
+          <th>Bus</th>
+          <th>Route</th>
+          <th>Journey Date</th>
+          <th>Departure</th>
+          <th>Arrival</th>
+          <th>Fare</th>
+          <th>Seats</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let schedule of filteredSchedules">
+          <td>
+            <div class="bus-info">
+              <div class="bus-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="M3 10h18"></path>
+                  <circle cx="8" cy="17" r="1"></circle>
+                  <circle cx="16" cy="17" r="1"></circle>
+                </svg>
+              </div>
+              <div>
+                <div class="bus-number">{{ schedule.busNumber }}</div>
+                <div class="bus-name">{{ schedule.busName }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="route-info">
+              <span class="route-cities">{{ schedule.fromCity }} → {{ schedule.toCity }}</span>
+            </div>
+          </td>
+          <td>{{ formatDate(schedule.journeyDate) }}</td>
+          <td>
+            <span class="time-badge">{{ formatTime(schedule.departureTime) }}</span>
+          </td>
+          <td>
+            <span class="time-badge">{{ formatTime(schedule.arrivalTime) }}</span>
+          </td>
+          <td>
+            <span class="fare-badge">{{ schedule.fareCurrency }} {{ schedule.fareAmount }}</span>
+          </td>
+          <td>
+            <span [class]="'seats-badge ' + getSeatClass(schedule.availableSeats, schedule.totalSeats)">
+              {{ schedule.availableSeats }}/{{ schedule.totalSeats }}
+            </span>
+          </td>
+          <td>
+            <span [class]="getStatusClass(schedule.isActive)">
+              {{ getStatusText(schedule.isActive) }}
+            </span>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-icon btn-edit" [routerLink]="['/admin/schedules', schedule.id]" title="Edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                </svg>
+              </button>
+              <button class="btn-icon btn-delete" (click)="confirmDelete(schedule)" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredSchedules.length === 0" class="empty-state">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line>
+        <line x1="8" y1="2" x2="8" y2="6"></line>
+        <line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <h3>No schedules found</h3>
+      <p>{{ searchTerm ? 'Try adjusting your search' : 'Get started by creating your first bus schedule' }}</p>
+      <button class="btn-primary" routerLink="/admin/schedules/new" *ngIf="!searchTerm">
+        Add Your First Schedule
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="showDeleteModal = false">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Delete Schedule</h3>
+    <p *ngIf="selectedSchedule">
+      Are you sure you want to delete this schedule for <strong>{{ selectedSchedule.busNumber }}</strong> 
+      ({{ selectedSchedule.fromCity }} → {{ selectedSchedule.toCity }}) on {{ formatDate(selectedSchedule.journeyDate) }}?
+    </p>
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="showDeleteModal = false">Cancel</button>
+      <button class="btn-danger" (click)="deleteSchedule()">Delete</button>
+    </div>
+  </div>
+</div>

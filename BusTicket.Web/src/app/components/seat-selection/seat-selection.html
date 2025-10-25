@@ -1,0 +1,107 @@
+<div class="seat-selection-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <button mat-icon-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <mat-card-title>Select Your Seats</mat-card-title>
+    </mat-card-header>
+  </mat-card>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="content-layout" *ngIf="!loading">
+    <mat-card class="seats-card">
+      <mat-card-content>
+        <div class="driver-section">
+          <mat-icon class="steering-icon">drive_eta</mat-icon>
+          <span>Driver</span>
+        </div>
+
+        <div class="seat-layout">
+          <div class="seat-row" *ngFor="let row of [].constructor(maxRows); let i = index">
+            <div class="row-label">{{ i + 1 }}</div>
+            <div class="seats">
+              <div *ngFor="let seat of getSeatsByRow(i + 1)"
+                   class="seat"
+                   [ngClass]="getSeatClass(seat)"
+                   (click)="toggleSeat(seat)">
+                <mat-icon>event_seat</mat-icon>
+                <span class="seat-number">{{ seat.seatNumber }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="seat-sample seat-available">
+              <mat-icon>event_seat</mat-icon>
+            </div>
+            <span>Available</span>
+          </div>
+          <div class="legend-item">
+            <div class="seat-sample seat-selected">
+              <mat-icon>event_seat</mat-icon>
+            </div>
+            <span>Selected</span>
+          </div>
+          <div class="legend-item">
+            <div class="seat-sample seat-booked">
+              <mat-icon>event_seat</mat-icon>
+            </div>
+            <span>Booked</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Booking Summary</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-section">
+          <h3>Selected Seats</h3>
+          <div class="selected-seats-list" *ngIf="selectedSeats.length > 0">
+            <mat-chip-set>
+              <mat-chip *ngFor="let seat of selectedSeats" 
+                        (removed)="toggleSeat(seat)">
+                {{ seat.seatNumber }}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+          <p *ngIf="selectedSeats.length === 0" class="no-selection">
+            No seats selected
+          </p>
+        </div>
+
+        <div class="summary-section">
+          <div class="fare-breakdown">
+            <div class="fare-row">
+              <span>Number of Seats:</span>
+              <strong>{{ selectedSeats.length }}</strong>
+            </div>
+            <div class="fare-row total">
+              <span>Total Fare:</span>
+              <strong>BDT {{ getTotalFare() }}</strong>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" 
+                [disabled]="selectedSeats.length === 0"
+                (click)="proceedToBooking()">
+          <mat-icon>arrow_forward</mat-icon>
+          Proceed to Booking
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

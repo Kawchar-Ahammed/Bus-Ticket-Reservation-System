@@ -1,0 +1,50 @@
+.payment-processing-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.payment-option {
+  .btn-check:checked + .btn {
+    background-color: var(--bs-primary);
+    color: white;
+    border-color: var(--bs-primary);
+  }
+
+  .btn-outline-primary {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+.form-check-input {
+  &:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+  }
+}
+
+.spinner-border {
+  animation: spinner-border 0.75s linear infinite;
+}
+
+.alert {
+  border-radius: 8px;
+}
+
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.table {
+  font-size: 0.9rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}

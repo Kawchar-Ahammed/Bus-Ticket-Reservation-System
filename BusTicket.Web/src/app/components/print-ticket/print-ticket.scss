@@ -1,0 +1,307 @@
+.print-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 60px 20px;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #999;
+  }
+  
+  p {
+    margin-top: 16px;
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+.no-print {
+  margin-bottom: 20px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.ticket {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  .company-info {
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #1976d2;
+      font-weight: 600;
+    }
+    
+    .bus-info {
+      margin: 4px 0 0 0;
+      color: #666;
+      font-size: 16px;
+    }
+  }
+  
+  .ticket-number {
+    text-align: right;
+    
+    .label {
+      margin: 0;
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+    }
+    
+    h2 {
+      margin: 4px 0 0 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      font-family: 'Courier New', monospace;
+    }
+  }
+}
+
+.journey-section,
+.passenger-section,
+.footer-section,
+.terms-section {
+  margin: 24px 0;
+  
+  h3, h4 {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+  }
+}
+
+.route-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  
+  .location {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    
+    mat-icon {
+      color: #1976d2;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+    
+    .city {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .address {
+      margin: 4px 0 0 0;
+      font-size: 14px;
+      color: #666;
+    }
+  }
+  
+  .arrow {
+    mat-icon {
+      color: #999;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.journey-info-grid,
+.passenger-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  
+  mat-icon {
+    color: #1976d2;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+  }
+  
+  .label {
+    margin: 0;
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  
+  .value {
+    margin: 4px 0 0 0;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    
+    &.status {
+      padding: 4px 12px;
+      background: #4caf50;
+      color: white;
+      border-radius: 4px;
+      display: inline-block;
+      font-size: 14px;
+    }
+  }
+}
+
+.footer-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.qr-section {
+  flex: 0 0 auto;
+  
+  .qr-code-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    canvas {
+      border: 2px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 8px;
+      background: white;
+    }
+    
+    .qr-label {
+      margin: 8px 0 0 0;
+      font-size: 10px;
+      color: #999;
+      text-align: center;
+    }
+  }
+}
+
+.status-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+.terms-section {
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+  }
+}
+
+.print-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  
+  p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #999;
+    
+    &:last-child {
+      font-weight: 500;
+      color: #1976d2;
+    }
+  }
+}
+
+/* Print Styles */
+@media print {
+  .print-container {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .ticket {
+    border: none;
+    box-shadow: none;
+    padding: 20px;
+  }
+  
+  .ticket-header .company-info h1 {
+    color: #000;
+  }
+  
+  .route-info .location mat-icon,
+  .info-item mat-icon {
+    color: #000;
+  }
+  
+  .value.status {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000;
+  }
+  
+  .print-footer p:last-child {
+    color: #000;
+  }
+  
+  /* Page break control */
+  .journey-section,
+  .passenger-section {
+    page-break-inside: avoid;
+  }
+}

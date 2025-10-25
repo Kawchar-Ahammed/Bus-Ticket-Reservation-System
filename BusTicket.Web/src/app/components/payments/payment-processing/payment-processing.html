@@ -1,0 +1,229 @@
+<div class="payment-processing-container">
+  <!-- Payment Form -->
+  <div class="card" *ngIf="!showResult">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">
+        <i class="bi bi-credit-card me-2"></i>
+        Payment Processing
+      </h5>
+    </div>
+    <div class="card-body">
+      <!-- Payment Summary -->
+      <div class="alert alert-info mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <span><strong>Amount to Pay:</strong></span>
+          <span class="h4 mb-0">৳{{ amount | number: '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+        <!-- Payment Method Selection -->
+        <div class="mb-4">
+          <label class="form-label fw-bold">Select Payment Method</label>
+          <div class="row g-3">
+            <div class="col-md-4 col-sm-6" *ngFor="let method of paymentMethods">
+              <div class="payment-option">
+                <input 
+                  type="radio" 
+                  [id]="'method-' + method.value" 
+                  [value]="method.value"
+                  formControlName="paymentMethod"
+                  class="btn-check">
+                <label [for]="'method-' + method.value" class="btn btn-outline-primary w-100 py-3">
+                  <i [class]="method.icon + ' fs-3 d-block mb-2'"></i>
+                  <span class="d-block">{{ method.label }}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Gateway Selection -->
+        <div class="mb-4" *ngIf="currentGateways.length > 0">
+          <label class="form-label fw-bold">Select Payment Gateway</label>
+          <div class="row g-3">
+            <div class="col-md-6" *ngFor="let gateway of currentGateways">
+              <div class="form-check">
+                <input 
+                  type="radio" 
+                  [id]="'gateway-' + gateway.value" 
+                  [value]="gateway.value"
+                  formControlName="paymentGateway"
+                  class="form-check-input">
+                <label [for]="'gateway-' + gateway.value" class="form-check-label">
+                  {{ gateway.label }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions -->
+        <div class="mb-4">
+          <div class="form-check">
+            <input 
+              type="checkbox" 
+              id="agreeToTerms" 
+              formControlName="agreeToTerms"
+              class="form-check-input">
+            <label for="agreeToTerms" class="form-check-label">
+              I agree to the <a href="#" class="text-primary">terms and conditions</a> and 
+              <a href="#" class="text-primary">refund policy</a>
+            </label>
+          </div>
+          <div class="text-danger small mt-1" *ngIf="paymentForm.get('agreeToTerms')?.invalid && paymentForm.get('agreeToTerms')?.touched">
+            You must agree to the terms and conditions
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <button 
+            type="submit" 
+            class="btn btn-primary btn-lg flex-grow-1"
+            [disabled]="isProcessing || paymentForm.invalid">
+            <span *ngIf="!isProcessing">
+              <i class="bi bi-check-circle me-2"></i>
+              Process Payment
+            </span>
+            <span *ngIf="isProcessing">
+              <span class="spinner-border spinner-border-sm me-2"></span>
+              Processing...
+            </span>
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary btn-lg"
+            (click)="cancel()"
+            [disabled]="isProcessing">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <!-- Processing Indicator -->
+      <div class="text-center mt-4" *ngIf="isProcessing">
+        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;"></div>
+        <p class="text-muted">
+          <strong>Processing your payment...</strong><br>
+          Please do not close this window or press the back button.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Result -->
+  <div class="card" *ngIf="showResult && paymentResult">
+    <div class="card-header" [ngClass]="{
+      'bg-success text-white': paymentResult.status === 2,
+      'bg-danger text-white': paymentResult.status === 3,
+      'bg-warning': paymentResult.status === 1
+    }">
+      <h5 class="mb-0">
+        <i class="bi" [ngClass]="{
+          'bi-check-circle': paymentResult.status === 2,
+          'bi-x-circle': paymentResult.status === 3,
+          'bi-clock': paymentResult.status === 1
+        }"></i>
+        Payment {{ getStatusName(paymentResult.status) }}
+      </h5>
+    </div>
+    <div class="card-body">
+      <!-- Success Message -->
+      <div class="alert alert-success" *ngIf="paymentResult.status === 2">
+        <h5 class="alert-heading">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Payment Successful!
+        </h5>
+        <p class="mb-0">Your payment has been processed successfully. Your booking is confirmed.</p>
+      </div>
+
+      <!-- Failure Message -->
+      <div class="alert alert-danger" *ngIf="paymentResult.status === 3">
+        <h5 class="alert-heading">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          Payment Failed
+        </h5>
+        <p class="mb-0">{{ paymentResult.failureReason || 'Payment could not be processed. Please try again.' }}</p>
+      </div>
+
+      <!-- Payment Details -->
+      <div class="row g-3 mt-2">
+        <div class="col-md-6">
+          <strong>Transaction ID:</strong>
+          <div class="text-muted">{{ paymentResult.transactionId }}</div>
+        </div>
+        <div class="col-md-6">
+          <strong>Gateway Transaction ID:</strong>
+          <div class="text-muted">{{ paymentResult.gatewayTransactionId || 'N/A' }}</div>
+        </div>
+        <div class="col-md-6">
+          <strong>Amount:</strong>
+          <div class="text-muted">{{ paymentResult.currency }} {{ paymentResult.amount | number: '1.2-2' }}</div>
+        </div>
+        <div class="col-md-6">
+          <strong>Payment Method:</strong>
+          <div class="text-muted">{{ paymentResult.paymentMethodName }}</div>
+        </div>
+        <div class="col-md-6">
+          <strong>Payment Gateway:</strong>
+          <div class="text-muted">{{ paymentResult.gatewayName }}</div>
+        </div>
+        <div class="col-md-6">
+          <strong>Payment Date:</strong>
+          <div class="text-muted">{{ paymentResult.paymentDate | date: 'medium' }}</div>
+        </div>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="mt-4" *ngIf="paymentResult.transactions && paymentResult.transactions.length > 0">
+        <h6 class="fw-bold">Transaction History</h6>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transaction of paymentResult.transactions">
+                <td>{{ transaction.processedAt | date: 'short' }}</td>
+                <td>{{ transaction.action }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-success': transaction.isSuccess,
+                    'bg-danger': !transaction.isSuccess
+                  }">
+                    {{ transaction.isSuccess ? 'Success' : 'Failed' }}
+                  </span>
+                </td>
+                <td>{{ transaction.responseMessage || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2 mt-4">
+        <button 
+          type="button" 
+          class="btn btn-primary flex-grow-1"
+          *ngIf="paymentResult.status === 3"
+          (click)="retryPayment()">
+          <i class="bi bi-arrow-clockwise me-2"></i>
+          Try Again
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-outline-secondary"
+          (click)="cancel()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

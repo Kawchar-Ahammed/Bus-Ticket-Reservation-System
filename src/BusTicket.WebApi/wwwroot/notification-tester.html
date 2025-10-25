@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification System Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-booking {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-24h {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .btn-1h {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .btn-all {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            font-size: 16px;
+            padding: 18px;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+
+        .result.info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 Notification System Tester</h1>
+        <p class="subtitle">Test all email and SMS notifications</p>
+
+        <div class="form-group">
+            <label for="email">📧 Email Address *</label>
+            <input type="email" id="email" placeholder="your.email@example.com" value="kawcharahammed16@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="name">👤 Passenger Name (Optional)</label>
+            <input type="text" id="name" placeholder="John Doe" value="Kawchar">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">📱 Phone Number (Optional)</label>
+            <input type="tel" id="phone" placeholder="01234567890" value="01444444444">
+        </div>
+
+        <div class="button-grid">
+            <button class="btn-booking" onclick="sendNotification('booking-confirmation')">
+                📝 Booking Confirmation
+            </button>
+            <button class="btn-cancel" onclick="sendNotification('cancellation-confirmation')">
+                ❌ Cancellation
+            </button>
+            <button class="btn-24h" onclick="sendNotification('reminder-24h')">
+                ⏰ 24-Hour Reminder
+            </button>
+            <button class="btn-1h" onclick="sendNotification('reminder-1h')">
+                🚨 1-Hour URGENT
+            </button>
+            <button class="btn-all" onclick="sendNotification('test-all')">
+                🚀 Test All Notifications (4 emails)
+            </button>
+        </div>
+
+        <div id="result" class="result"></div>
+
+        <div class="note">
+            <strong>📌 Note:</strong>
+            • Check your email inbox after clicking a button<br>
+            • SMS messages will appear in the API console logs<br>
+            • "Test All" sends 4 different emails with 2-second delays<br>
+            • API must be running on http://localhost:5258
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5258/api/NotificationTest';
+
+        async function sendNotification(type) {
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const resultDiv = document.getElementById('result');
+
+            // Validation
+            if (!email) {
+                showResult('error', '❌ Please enter an email address');
+                return;
+            }
+
+            // Disable all buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Show loading
+            const clickedButton = event.target;
+            const originalText = clickedButton.innerHTML;
+            clickedButton.innerHTML = originalText + '<span class="loading"></span>';
+
+            try {
+                showResult('info', '⏳ Sending notification...');
+
+                const response = await fetch(`${API_BASE}/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        passengerName: name || 'Test Passenger',
+                        phoneNumber: phone || '01234567890'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    let message = `✅ ${data.message}<br><br>`;
+                    message += `📧 Sent to: <strong>${data.sentTo}</strong><br>`;
+                    if (data.ticketNumber) {
+                        message += `🎫 Ticket: <strong>${data.ticketNumber}</strong><br>`;
+                    }
+                    if (data.results) {
+                        message += `<br><strong>Results:</strong><br>`;
+                        data.results.forEach(r => message += `${r}<br>`);
+                    }
+                    message += `<br><small>${data.note}</small>`;
+                    showResult('success', message);
+                } else {
+                    showResult('error', `❌ ${data.message || 'Failed to send notification'}<br><small>${data.error || ''}</small>`);
+                }
+            } catch (error) {
+                showResult('error', `❌ Error: ${error.message}<br><br><small>Make sure the API is running on http://localhost:5258</small>`);
+            } finally {
+                // Re-enable buttons
+                buttons.forEach(btn => btn.disabled = false);
+                clickedButton.innerHTML = originalText;
+            }
+        }
+
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = message;
+        }
+
+        // Auto-focus email input
+        document.getElementById('email').focus();
+    </script>
+</body>
+</html>

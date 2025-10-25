@@ -1,0 +1,135 @@
+<div class="form-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading company details...</p>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!loading" class="form-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h1>{{ isEditMode ? 'Edit Company' : 'Add New Company' }}</h1>
+        <p>{{ isEditMode ? 'Update company information' : 'Create a new bus company' }}</p>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <form [formGroup]="companyForm" (ngSubmit)="onSubmit()">
+        <!-- Company Name -->
+        <div class="form-group">
+          <label for="name">Company Name <span class="required">*</span></label>
+          <input 
+            id="name"
+            type="text" 
+            formControlName="name" 
+            placeholder="Enter company name"
+            [class.error]="hasFieldError('name')"
+          />
+          <span *ngIf="hasFieldError('name')" class="error-message">
+            {{ getFieldError('name') }}
+          </span>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            id="email"
+            type="email" 
+            formControlName="email" 
+            placeholder="company@example.com"
+            [class.error]="hasFieldError('email')"
+          />
+          <span *ngIf="hasFieldError('email')" class="error-message">
+            {{ getFieldError('email') }}
+          </span>
+        </div>
+
+        <!-- Contact Number -->
+        <div class="form-group">
+          <label for="contactNumber">Contact Number</label>
+          <input 
+            id="contactNumber"
+            type="text" 
+            formControlName="contactNumber" 
+            placeholder="+1 234 567 8900"
+            [class.error]="hasFieldError('contactNumber')"
+          />
+          <span *ngIf="hasFieldError('contactNumber')" class="error-message">
+            {{ getFieldError('contactNumber') }}
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description"
+            formControlName="description" 
+            rows="4"
+            placeholder="Enter company description"
+            [class.error]="hasFieldError('description')"
+          ></textarea>
+          <span *ngIf="hasFieldError('description')" class="error-message">
+            {{ getFieldError('description') }}
+          </span>
+        </div>
+
+        <!-- Active Status (Only in Edit Mode) -->
+        <div *ngIf="isEditMode" class="form-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              formControlName="isActive"
+            />
+            <span>Active</span>
+          </label>
+          <p class="help-text">Inactive companies will not be able to add new buses or schedules</p>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn-secondary"
+            (click)="onCancel()"
+            [disabled]="submitting"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-primary"
+            [disabled]="submitting"
+            (click)="onSubmit(); $event.preventDefault()"
+          >
+            <span *ngIf="!submitting">{{ isEditMode ? 'Update Company' : 'Create Company' }}</span>
+            <span *ngIf="submitting" class="loading-text">
+              <span class="spinner-small"></span>
+              {{ isEditMode ? 'Updating...' : 'Creating...' }}
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

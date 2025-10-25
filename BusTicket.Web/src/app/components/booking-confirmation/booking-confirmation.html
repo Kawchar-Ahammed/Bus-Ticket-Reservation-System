@@ -1,0 +1,218 @@
+<div class="booking-container">
+  <div *ngIf="!bookingComplete">
+    <mat-card class="booking-card">
+      <mat-card-header>
+        <mat-card-title>Passenger Details</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="booking-summary">
+          <h3>Booking Summary</h3>
+          <div class="summary-item">
+            <span>Selected Seats:</span>
+            <strong>{{ seatNumbers }}</strong>
+          </div>
+          <div class="summary-item">
+            <span>Total Fare:</span>
+            <strong class="fare">BDT {{ totalFare }}</strong>
+          </div>
+        </div>
+
+        <form [formGroup]="bookingForm" (ngSubmit)="confirmBooking()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="passengerName" placeholder="Enter your full name">
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="bookingForm.get('passengerName')?.hasError('required')">
+                Name is required
+              </mat-error>
+              <mat-error *ngIf="bookingForm.get('passengerName')?.hasError('minlength')">
+                Name must be at least 3 characters
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="passengerEmail" placeholder="your.email@example.com">
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="bookingForm.get('passengerEmail')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="bookingForm.get('passengerEmail')?.hasError('email')">
+                Please enter a valid email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Phone Number</mat-label>
+              <input matInput formControlName="passengerPhone" placeholder="01XXXXXXXXX">
+              <mat-icon matPrefix>phone</mat-icon>
+              <mat-error *ngIf="bookingForm.get('passengerPhone')?.hasError('required')">
+                Phone number is required
+              </mat-error>
+              <mat-error *ngIf="bookingForm.get('passengerPhone')?.hasError('pattern')">
+                Please enter a valid 11-digit phone number
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>National ID (NID)</mat-label>
+              <input matInput formControlName="passengerNid" placeholder="Enter your NID">
+              <mat-icon matPrefix>badge</mat-icon>
+              <mat-error *ngIf="bookingForm.get('passengerNid')?.hasError('required')">
+                NID is required
+              </mat-error>
+              <mat-error *ngIf="bookingForm.get('passengerNid')?.hasError('pattern')">
+                Please enter a valid NID (10-17 digits)
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="goToHome()">
+              Cancel
+            </button>
+            <button mat-raised-button color="primary" type="submit" 
+                    [disabled]="bookingForm.invalid || loading">
+              <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+              <span *ngIf="!loading">Confirm Booking</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="bookingComplete && bookingDetails" class="success-container">
+    <mat-card class="success-card">
+      <mat-card-header>
+        <div class="success-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <mat-card-title>Booking Confirmed!</mat-card-title>
+        <mat-card-subtitle>Your ticket has been successfully booked</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="ticket-details">
+          <h3>Ticket Information</h3>
+          
+          <div class="detail-row">
+            <span class="label">Ticket Number:</span>
+            <strong class="value">{{ bookingDetails.ticketNumber }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Passenger Name:</span>
+            <strong class="value">{{ bookingDetails.passengerName }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Company:</span>
+            <strong class="value">{{ bookingDetails.companyName }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Bus Number:</span>
+            <strong class="value">{{ bookingDetails.busNumber }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Route:</span>
+            <strong class="value">{{ bookingDetails.fromCity }} → {{ bookingDetails.toCity }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Journey Date:</span>
+            <strong class="value">{{ bookingDetails.journeyDate | date:'fullDate' }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Departure Time:</span>
+            <strong class="value">{{ bookingDetails.departureTime }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Seat Numbers:</span>
+            <strong class="value">{{ bookingDetails.seatNumbers }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Boarding Point:</span>
+            <strong class="value">{{ bookingDetails.boardingPoint }}</strong>
+          </div>
+          
+          <div class="detail-row">
+            <span class="label">Dropping Point:</span>
+            <strong class="value">{{ bookingDetails.droppingPoint }}</strong>
+          </div>
+          
+          <div class="detail-row total">
+            <span class="label">Total Fare:</span>
+            <strong class="value">{{ bookingDetails.currency }} {{ bookingDetails.totalFare }}</strong>
+          </div>
+        </div>
+        
+        <div class="important-note">
+          <mat-icon>info</mat-icon>
+          <p>Please save this ticket number for your records. You will need to present it at the boarding point.</p>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-raised-button color="accent" (click)="openPaymentModal()" *ngIf="!paymentComplete">
+          <mat-icon>payment</mat-icon>
+          Pay Now
+        </button>
+        <button mat-raised-button (click)="printTicket()">
+          <mat-icon>print</mat-icon>
+          Print Ticket
+        </button>
+        <button mat-raised-button color="primary" (click)="goToHome()">
+          <mat-icon>home</mat-icon>
+          Back to Home
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" *ngIf="showPaymentModal" (click)="closePaymentModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Complete Your Payment</h2>
+      <button class="btn-close" (click)="closePaymentModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <app-payment-processing
+        [ticketId]="getTicketId()"
+        [amount]="totalFare"
+        [customerEmail]="getCustomerEmail()"
+        (paymentCompleted)="onPaymentCompleted($event)"
+        (paymentFailed)="onPaymentFailed($event)"
+        (cancelled)="onPaymentCancelled()">
+      </app-payment-processing>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt Modal -->
+<div class="modal-overlay" *ngIf="showReceiptModal" (click)="closeReceiptModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Payment Receipt</h2>
+      <button class="btn-close" (click)="closeReceiptModal()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <app-payment-receipt *ngIf="paymentReceipt" [payment]="paymentReceipt">
+      </app-payment-receipt>
+    </div>
+  </div>
+</div>

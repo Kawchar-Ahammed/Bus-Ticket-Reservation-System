@@ -1,0 +1,181 @@
+<div class="admin-users-container">
+  <div class="page-header">
+    <h2>Admin Users Management</h2>
+    <button class="btn btn-primary" (click)="createUser()">
+      <i class="fas fa-plus"></i> Add Admin User
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-panel">
+    <div class="filter-group">
+      <label for="roleFilter">Role:</label>
+      <select 
+        id="roleFilter" 
+        [(ngModel)]="selectedRole" 
+        (change)="onFilterChange()"
+        class="form-control">
+        <option value="">All Roles</option>
+        <option [value]="AdminRole.SuperAdmin">Super Admin</option>
+        <option [value]="AdminRole.Admin">Admin</option>
+        <option [value]="AdminRole.Operator">Operator</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="statusFilter">Status:</label>
+      <select 
+        id="statusFilter" 
+        [(ngModel)]="selectedStatus" 
+        (change)="onFilterChange()"
+        class="form-control">
+        <option value="">All Status</option>
+        <option [value]="true">Active</option>
+        <option [value]="false">Inactive</option>
+      </select>
+    </div>
+
+    <div class="filter-group search-group">
+      <label for="search">Search:</label>
+      <input 
+        type="text" 
+        id="search"
+        [(ngModel)]="searchText"
+        (input)="onSearchChange()"
+        placeholder="Search by email or name..."
+        class="form-control">
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading admin users...</p>
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!isLoading" class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Full Name</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Last Login</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="filteredUsers.length === 0">
+          <td colspan="7" class="text-center">No admin users found</td>
+        </tr>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.email }}</td>
+          <td>{{ user.fullName }}</td>
+          <td>
+            <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+              {{ user.roleName }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass(user.isActive)">
+              {{ user.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>{{ formatDate(user.lastLoginDate) }}</td>
+          <td>{{ formatDate(user.createdAt) }}</td>
+          <td>
+            <div class="action-buttons">
+              <button 
+                class="btn btn-sm btn-info"
+                (click)="editUser(user)"
+                title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button 
+                class="btn btn-sm btn-warning"
+                (click)="openChangeRoleModal(user)"
+                title="Change Role">
+                <i class="fas fa-user-shield"></i>
+              </button>
+              <button 
+                *ngIf="user.isActive"
+                class="btn btn-sm btn-danger"
+                (click)="openConfirmModal(user, 'deactivate')"
+                title="Deactivate">
+                <i class="fas fa-ban"></i>
+              </button>
+              <button 
+                *ngIf="!user.isActive"
+                class="btn btn-sm btn-success"
+                (click)="openConfirmModal(user, 'activate')"
+                title="Activate">
+                <i class="fas fa-check-circle"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Change Role Modal -->
+<div class="modal" [class.show]="showRoleModal" *ngIf="showRoleModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Change User Role</h5>
+        <button type="button" class="close" (click)="closeRoleModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><strong>User:</strong> {{ selectedUser?.fullName }} ({{ selectedUser?.email }})</p>
+        <p><strong>Current Role:</strong> {{ selectedUser?.roleName }}</p>
+        
+        <div class="form-group">
+          <label for="newRole">New Role:</label>
+          <select id="newRole" [(ngModel)]="newRole" class="form-control">
+            <option *ngFor="let option of roleOptions" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeRoleModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="confirmChangeRole()">Change Role</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Status Change Modal -->
+<div class="modal" [class.show]="showConfirmModal" *ngIf="showConfirmModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm {{ confirmAction === 'deactivate' ? 'Deactivation' : 'Activation' }}</h5>
+        <button type="button" class="close" (click)="closeConfirmModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to {{ confirmAction }} this user?</p>
+        <p><strong>User:</strong> {{ selectedUser?.fullName }} ({{ selectedUser?.email }})</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeConfirmModal()">Cancel</button>
+        <button 
+          type="button" 
+          [class]="confirmAction === 'deactivate' ? 'btn btn-danger' : 'btn btn-success'"
+          (click)="confirmStatusChange()">
+          {{ confirmAction === 'deactivate' ? 'Deactivate' : 'Activate' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

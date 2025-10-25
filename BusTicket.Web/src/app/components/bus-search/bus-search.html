@@ -1,0 +1,111 @@
+<div class="search-container">
+  <!-- Header with My Bookings Link -->
+  <div class="header-actions">
+    <button mat-raised-button color="accent" routerLink="/my-bookings">
+      <mat-icon>receipt_long</mat-icon>
+      My Bookings
+    </button>
+  </div>
+
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>Search Bus Tickets</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="searchForm" (ngSubmit)="searchBuses()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>From City</mat-label>
+            <input matInput formControlName="fromCity" placeholder="e.g., Dhaka">
+            <mat-icon matPrefix>location_on</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>To City</mat-label>
+            <input matInput formControlName="toCity" placeholder="e.g., Chittagong">
+            <mat-icon matPrefix>location_on</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Journey Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="journeyDate" [min]="minDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="searchForm.invalid || loading">
+          <mat-icon>search</mat-icon>
+          Search Buses
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="loading-spinner" *ngIf="loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="results-container" *ngIf="searched && !loading">
+    <h2 *ngIf="busSchedules.length === 0">No buses found for your search criteria</h2>
+    
+    <mat-card class="bus-card" *ngFor="let schedule of busSchedules">
+      <mat-card-header>
+        <mat-card-title>{{ schedule.companyName }}</mat-card-title>
+        <mat-card-subtitle>{{ schedule.busNumber }} - {{ schedule.busName }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="bus-details">
+          <div class="route-info">
+            <div class="route-point">
+              <mat-icon>trip_origin</mat-icon>
+              <div>
+                <strong>{{ schedule.fromCity }}</strong>
+                <p>{{ schedule.boardingPoint }}</p>
+                <p class="time">{{ schedule.departureTime }}</p>
+              </div>
+            </div>
+            
+            <div class="route-line">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            
+            <div class="route-point">
+              <mat-icon>place</mat-icon>
+              <div>
+                <strong>{{ schedule.toCity }}</strong>
+                <p>{{ schedule.droppingPoint }}</p>
+                <p class="time">{{ schedule.arrivalTime }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bus-info">
+            <div class="info-item">
+              <mat-icon>event</mat-icon>
+              <span>{{ schedule.journeyDate | date:'mediumDate' }}</span>
+            </div>
+            <div class="info-item">
+              <mat-icon>event_seat</mat-icon>
+              <span>{{ schedule.seatsLeft }} / {{ schedule.totalSeats }} seats available</span>
+            </div>
+            <div class="fare-info">
+              <span class="fare-label">Fare:</span>
+              <span class="fare-amount">{{ schedule.currency }} {{ schedule.fare }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-raised-button color="primary" 
+                (click)="selectBus(schedule)"
+                [disabled]="schedule.seatsLeft === 0">
+          <mat-icon>event_seat</mat-icon>
+          {{ schedule.seatsLeft > 0 ? 'Select Seats' : 'Sold Out' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

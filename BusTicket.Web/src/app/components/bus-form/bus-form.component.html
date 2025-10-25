@@ -1,0 +1,163 @@
+<div class="form-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading bus details...</p>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!loading" class="form-content">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <h1>{{ isEditMode ? 'Edit Bus' : 'Add New Bus' }}</h1>
+        <p>{{ isEditMode ? 'Update bus information' : 'Add a new bus to your fleet' }}</p>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <form [formGroup]="busForm" (ngSubmit)="onSubmit()">
+        <!-- Bus Number -->
+        <div class="form-group">
+          <label for="busNumber">Bus Number <span class="required">*</span></label>
+          <input 
+            id="busNumber"
+            type="text" 
+            formControlName="busNumber" 
+            placeholder="e.g., BUS-001"
+            [class.error]="hasFieldError('busNumber')"
+          />
+          <span *ngIf="hasFieldError('busNumber')" class="error-message">
+            {{ getFieldError('busNumber') }}
+          </span>
+          <span *ngIf="isEditMode" class="help-text">Bus number cannot be changed</span>
+        </div>
+
+        <!-- Bus Name -->
+        <div class="form-group">
+          <label for="busName">Bus Name <span class="required">*</span></label>
+          <input 
+            id="busName"
+            type="text" 
+            formControlName="busName" 
+            placeholder="e.g., Volvo Express 9700"
+            [class.error]="hasFieldError('busName')"
+          />
+          <span *ngIf="hasFieldError('busName')" class="error-message">
+            {{ getFieldError('busName') }}
+          </span>
+        </div>
+
+        <!-- Company -->
+        <div class="form-group">
+          <label for="companyId">Company <span class="required">*</span></label>
+          <select 
+            id="companyId"
+            formControlName="companyId"
+            [class.error]="hasFieldError('companyId')"
+            [disabled]="isEditMode"
+          >
+            <option value="">Select a company</option>
+            <option *ngFor="let company of companies" [value]="company.id">
+              {{ company.name }}
+            </option>
+          </select>
+          <span *ngIf="hasFieldError('companyId')" class="error-message">
+            {{ getFieldError('companyId') }}
+          </span>
+          <span *ngIf="loadingCompanies" class="help-text">Loading companies...</span>
+          <span *ngIf="!loadingCompanies && companies.length === 0" class="help-text warning">
+            No active companies found. Please create a company first.
+          </span>
+          <span *ngIf="isEditMode" class="help-text">Company cannot be changed</span>
+        </div>
+
+        <!-- Total Seats -->
+        <div class="form-group">
+          <label for="totalSeats">Total Seats <span class="required">*</span></label>
+          <input 
+            id="totalSeats"
+            type="number" 
+            formControlName="totalSeats" 
+            placeholder="40"
+            min="1"
+            max="100"
+            [class.error]="hasFieldError('totalSeats')"
+            [readonly]="isEditMode"
+          />
+          <span *ngIf="hasFieldError('totalSeats')" class="error-message">
+            {{ getFieldError('totalSeats') }}
+          </span>
+          <span *ngIf="isEditMode" class="help-text">Total seats cannot be changed</span>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description"
+            formControlName="description" 
+            rows="4"
+            placeholder="Enter bus description (optional)"
+            [class.error]="hasFieldError('description')"
+          ></textarea>
+          <span *ngIf="hasFieldError('description')" class="error-message">
+            {{ getFieldError('description') }}
+          </span>
+        </div>
+
+        <!-- Active Status (Only in Edit Mode) -->
+        <div *ngIf="isEditMode" class="form-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              formControlName="isActive"
+            />
+            <span>Active</span>
+          </label>
+          <p class="help-text">Inactive buses will not be available for scheduling</p>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="btn-secondary"
+            (click)="onCancel()"
+            [disabled]="submitting"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn-primary"
+            [disabled]="submitting || loadingCompanies || (companies.length === 0 && !isEditMode)"
+          >
+            <span *ngIf="!submitting">{{ isEditMode ? 'Update Bus' : 'Create Bus' }}</span>
+            <span *ngIf="submitting" class="loading-text">
+              <span class="spinner-small"></span>
+              {{ isEditMode ? 'Updating...' : 'Creating...' }}
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
