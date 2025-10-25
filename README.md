@@ -1075,7 +1075,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - Initial work - [YourGitHub](https://github.com/yourusername)
+- **Your Name** - Initial work - [YourGitHub](https://github.com/Kawchar-Ahammed)
 
 ---
 
@@ -1092,7 +1092,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions or issues:
 - 📧 Email: support@busticket.com
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/bus-ticket-reservation-system/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/Kawchar-Ahammed/bus-ticket-reservation-system/issues)
 - 📖 Docs: [Documentation](./docs/)
 
 ---
@@ -1125,8 +1125,8 @@ For questions or issues:
 
 ⭐ Star this repository if you find it helpful!
 
-[Report Bug](https://github.com/yourusername/bus-ticket-reservation-system/issues) · 
-[Request Feature](https://github.com/yourusername/bus-ticket-reservation-system/issues) · 
+[Report Bug](https://github.com/Kawchar-Ahammed/bus-ticket-reservation-system/issues) · 
+[Request Feature](https://github.com/Kawchar-Ahammed/bus-ticket-reservation-system/issues) · 
 [Documentation](./docs/)
 
 </div>
